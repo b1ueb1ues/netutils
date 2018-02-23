@@ -1,6 +1,5 @@
-from forward import *
 
-class forward():
+class netutils_config():
     interface = 'enp8s0'
     targetip = '192.168.31.85'
     hostip = '192.168.31.1'
@@ -28,4 +27,5 @@ class forward():
     arpspoof2 = 0
 
 if __name__ == "__main__" :
-    run()
+    import netutils
+    netutils.run()
