@@ -4,19 +4,23 @@ import time
 import subprocess
 import config
 
+
+configstr = ''
 for i in config.netutils_config.__dict__ :
     if i[0] == '_':
         continue
     print '[c]',i,config.netutils_config.__dict__[i]
+    configstr += '[c] %s : %s\n'%(i,config.netutils_config.__dict__[i])
     vars()[i] = config.netutils_config.__dict__[i]
 
 
 ##portforward = 'iptables -t nat -A PREROUTING -p udp --dport %d -j REDIRECT --to-ports %d'%(8053,18053)
 #os.system(portforward)
 
-if twrecycle:
-    twrecycle = "echo '1' > /proc/sys/net/ipv4/tcp_tw_recycle"
-    os.system(twrecycle)
+if hasattr(config.netutils_config,'twrecycle'):
+    if twrecycle:
+        twrecycle = "echo '1' > /proc/sys/net/ipv4/tcp_tw_recycle"
+        os.system(twrecycle)
 
 
 if ipforward:
@@ -36,20 +40,28 @@ if arpspoofr :
     arpspoofr = 'arpspoof -r -i %s -t %s %s'%(interface,targetip,hostip)
     p = subprocess.Popen(arpspoofr,stderr=subprocess.PIPE, shell=1)
 
-if arpspoof2 :
-    arpspoof2 = 'arpspoof -i %s -t %s %s'%(interface,targetip,hostip)
-    arpspoof1 = 'arpspoof -i %s -t %s %s'%(interface,hostip,targetip)
-    p2 = subprocess.Popen(arpspoof2,stderr=subprocess.PIPE,shell=1)
-    p1 = subprocess.Popen(arpspoof1,stderr=subprocess.PIPE,shell=1)
+if hasattr(config.netutils_config,'arpspoof2'):
+    if arpspoof2 :
+        arpspoof2 = 'arpspoof -i %s -t %s %s'%(interface,targetip,hostip)
+        arpspoof1 = 'arpspoof -i %s -t %s %s'%(interface,hostip,targetip)
+        p2 = subprocess.Popen(arpspoof2,stderr=subprocess.PIPE,shell=1)
+        p1 = subprocess.Popen(arpspoof1,stderr=subprocess.PIPE,shell=1)
 
 
 def run():
     global twrecycle
 
+    j = 0
     try :
         while 1:
+            if j >= 10:
+                j = 0
+            j += 1
+            os.system('clear')
+            print '-- netutil\n'
+            print configstr
             print ''
-            print time.ctime()
+            print time.ctime(), '#' * j
             print '------------------------------\n',
 
             if len(portr) != 0:
@@ -84,7 +96,7 @@ def run():
 
             print ''
 
-            time.sleep(3)
+            time.sleep(1)
 
     except KeyboardInterrupt:
             #os.system("echo '0' > /proc/sys/net/ipv4/ip_forward")

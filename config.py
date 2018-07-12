@@ -1,30 +1,37 @@
+def getips():
+    import subprocess
+    lip = subprocess.check_output("hostname -I",shell=1).strip('\n')
+    tmprip = subprocess.check_output("ip route |grep default|awk '{print $3}'",shell=1)
+    rip = str(tmprip).strip('\n')
+    return lip,rip
 
 class netutils_config():
-    interface = 'enp8s0'
-    targetip = '192.168.31.85'
-    hostip = '192.168.31.1'
+    interface = 'enp0s31f6'
+    targetip = '192.168.28.193'
+    #hostip = '192.168.28.1'
+    myip, hostip = getips()
+    ipforward = 1
+    arpspoofr = 1
+    port_redirect = 0
+
+    arpspoof2 = 0
+    twrecycle = 0
 
     _END = -1
 
-    port_redirect = [
-            80,
-            443,
-            #8053,
-            _END
-            ]
 
-
-    ipforward = 1
-
-    twrecycle = 0
-
-    if 0 :
+    if port_redirect :
+        port_redirect = [
+                80,
+                443,
+                #8053,
+                _END
+                ]
+    else:
         port_redirect = [
                 _END
                 ]
 
-    arpspoofr = 1
-    arpspoof2 = 0
 
 if __name__ == "__main__" :
     import netutils
