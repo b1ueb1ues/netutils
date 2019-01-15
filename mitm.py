@@ -1,7 +1,6 @@
 from scapy.all import *
 import socket
 
-
 iface = 'enp0s31f6'
 
 mymac = '8c:ec:4b:47:a0:a0'
