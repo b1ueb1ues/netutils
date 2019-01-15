@@ -7,7 +7,7 @@ def getips():
 
 class netutils_config():
     interface = 'enp0s31f6'
-    targetip = '192.168.28.193'
+    targetip = '192.168.4.111'
     ipforward = 1
     arpspoofr = 1
     port_redirect = 0
@@ -15,24 +15,19 @@ class netutils_config():
     arpspoof2 = 0
     twrecycle = 0
 
-    _END = -1
-
     myip, routerip = getips()
     hostip = routerip
-    #hostip = '192.168.28.1'
+    #hostip = '192.168.4.178'
 
 
     if port_redirect :
-        port_redirect = [
-                80,
-                443,
-                #8053,
-                _END
-                ]
+        port_redirect = {
+                80:1080,
+                443:10443,
+                }
     else:
-        port_redirect = [
-                _END
-                ]
+        port_redirect = {
+                }
 
 
 if __name__ == "__main__" :

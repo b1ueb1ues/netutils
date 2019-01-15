@@ -32,7 +32,7 @@ portr = []
 pp = []
 for i in port_redirect :
     if i != -1:
-        portr.append( 'iptables -t nat -A PREROUTING -p tcp --dport %d -j REDIRECT --to-ports %d'%(i,i+10000) )
+        portr.append( 'iptables -t nat -A PREROUTING -p tcp --dport %d -j REDIRECT --to-ports %d'%(i,port_redirect[i]) )
         pp.append(subprocess.Popen(portr[-1],stderr=subprocess.PIPE, shell=1))
         #os.system(portr[-1])
 
@@ -104,7 +104,7 @@ def run():
             for i in port_redirect:
                 if i == -1:
                     continue
-                portd = 'iptables -t nat -D PREROUTING -p tcp --dport %d -j REDIRECT --to-ports %d'%(i,i+10000)
+                portd = 'iptables -t nat -D PREROUTING -p tcp --dport %d -j REDIRECT --to-ports %d'%(i,port_redirect[i])
                 print portd
                 os.system(portd)
 
