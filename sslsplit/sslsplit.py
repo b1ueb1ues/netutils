@@ -1,5 +1,7 @@
 import subprocess
 import os
+import sys
+import config
 
 
 def run(args,port80=10080,port443=10443):
@@ -9,13 +11,19 @@ def run(args,port80=10080,port443=10443):
     cmd += ' ssl 0.0.0.0 ' + str(port443)
     cmd += ' tcp 0.0.0.0 ' + str(port80)
     cmd += ' ' + args
-    print cmd
+    print(cmd)
     subprocess.Popen(cmd,shell=1)
 
 def stop():
-    cmd = "kill `ps aux | grep -m1 'sslsplit -k' | awk '{print $2}'`"
+    cmd = "kill -9 `ps aux | grep -m1 'sslsplit -k' | awk '{print $2}'`"
     os.system(cmd)
 
 
 if __name__ == '__main__' :
-    run('-D')
+    try:
+        run('-D -L https.out')
+        sys.stdin.read()
+    except KeyboardInterrupt:
+        pass
+
+

@@ -1,13 +1,36 @@
 def getips():
     import subprocess
-    lip = subprocess.check_output("hostname -I",shell=1).strip('\n')
-    tmprip = subprocess.check_output("ip route |grep default|awk '{print $3}'",shell=1)
-    rip = str(tmprip).strip('\n')
+    lip = subprocess.check_output("hostname -I",shell=1)
+    lip = lip.decode().strip('\\n').strip('\n')
+    lip = lip.split(' ')[0]
+    
+    rip = subprocess.check_output("ip route |grep default|awk '{print $3}'",shell=1)
+    rip = rip.decode().strip('\\n').strip('\n')
     return lip,rip
+
+def getmac(ip):
+    mac = subprocess.check_output( "arp %s|grep ether|awk '{print $3}'"%ip, shell=1) \
+            .decode() \
+            .strip('\n')
+    if not mac:
+        print('no arp for %s'%ip)
+        raise
+    return mac
+
+def mymac(iface):
+    mymac = subprocess.check_output( \
+            "ifconfig %s|grep ether|awk '{print $2}'"%iface, shell=1) \
+            .decode().strip('\n')
+    if not mymac :
+        print('no mymac')
+        raise
+    return mymac
+
+
 
 class netutils_config():
     interface = 'enp0s31f6'
-    targetip = '192.168.4.111'
+    targetip = '192.168.3.90'
     ipforward = 1
     arpspoofr = 1
     port_redirect = 0

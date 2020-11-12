@@ -9,7 +9,7 @@ configstr = ''
 for i in config.netutils_config.__dict__ :
     if i[0] == '_':
         continue
-    print '[c]',i,config.netutils_config.__dict__[i]
+    print( '[c]',i,config.netutils_config.__dict__[i] )
     configstr += '[c] %s : %s\n'%(i,config.netutils_config.__dict__[i])
     vars()[i] = config.netutils_config.__dict__[i]
 
@@ -58,43 +58,43 @@ def run():
                 j = 0
             j += 1
             os.system('clear')
-            print '-- netutil\n'
-            print configstr
-            print ''
-            print time.ctime(), '#' * j
-            print '------------------------------\n',
+            print( '-- netutil\n' )
+            print( configstr )
+            print( '' )
+            print( time.ctime(), '#' * j )
+            print( '------------------------------\n', )
 
             if len(portr) != 0:
                 for i in range(len(portr)):
-                    print '>',portr[i]
+                    print( '>',portr[i] )
                     err =  pp[i].stderr.readline()
                     if err:
-                        print err
-                    loc = err.find('Permission denied')
+                        print( err )
+                    loc = err.decode().find('Permission denied')
                     if loc != -1:
                         return
 
             if arpspoofr :
-                print '>',arpspoofr
+                print( '>',arpspoofr )
                 err =  p.stderr.readline()
                 if err[:9] == 'arpspoof:' :
-                    print err
+                    print( err )
                     return
 
             if arpspoof2 :
-                print '>',arpspoof1
-                print '>',arpspoof2
+                print( '>',arpspoof1 )
+                print( '>',arpspoof2 )
                 err =  p2.stderr.readline()
                 if err[:9] == 'arpspoof:' :
-                    print err
+                    print( err )
                     return
 
-            #print 'redirect:',port_redirect
+            #print( 'redirect:',port_redirect )
             
             if twrecycle :
-                print '>',twrecycle
+                print( '>',twrecycle )
 
-            print ''
+            print( '' )
 
             time.sleep(1)
 
@@ -105,14 +105,14 @@ def run():
                 if i == -1:
                     continue
                 portd = 'iptables -t nat -D PREROUTING -p tcp --dport %d -j REDIRECT --to-ports %d'%(i,port_redirect[i])
-                print portd
+                print( portd )
                 os.system(portd)
 
             if twrecycle:
                 twrecycle = "echo '0' >/proc/sys/net/ipv4/tcp_tw_recycle"
                 os.system(twrecycle)
-    except Exception,e:
-        print e
+    #except Exception as e:
+    #    print( e )
 
 
 if __name__ == '__main__' :
